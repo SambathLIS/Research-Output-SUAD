@@ -1,0 +1,1513 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sorbonne University Abu Dhabi - Publications Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    body { 
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .logo { max-height: 120px; }
+    .header-card {
+      font-size: 18px;
+      background:#fff important; /*linear-gradient(135deg, #1a237e 0%, #283593 100%); */
+      color: #1a237e important; 
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(26, 35, 126, 0.3);
+    }
+    .card { 
+      border-radius: 12px; 
+      border: none; 
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    .kpi { 
+      border: 1px solid rgba(26, 35, 126, 0.12); 
+      border-radius: 12px; 
+      background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+      transition: all 0.3s ease;
+      text-decoration: none; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: center; 
+      height: 100%; 
+      min-height: 140px; 
+      color: inherit; 
+      padding: 20px !important;
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #1a237e, #283593);
+    }
+    .kpi:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(26, 35, 126, 0.2);
+      border-color: #1a237e;
+    }
+    .kpi-val { 
+      font-size: 2rem; 
+      font-weight: 700; 
+      font-family: 'Segoe UI', sans-serif; 
+      letter-spacing: -0.5px; 
+      margin: 8px 0; 
+      background: linear-gradient(135deg, #1a237e, #3949ab);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .muted { 
+      color: #6c757d; 
+      text-transform: uppercase; 
+      font-size: 0.7rem; 
+      font-weight: 600; 
+      letter-spacing: 0.8px; 
+    }
+    .chip { 
+      border-radius: 20px; 
+      padding: 0.25rem 0.65rem; 
+      font-size: 0.75rem; 
+      font-weight: 600;
+      border: 1px solid rgba(0,0,0,0.1); 
+    }
+    .gold { background: #fef3c7; color: #92400e; } 
+    .green { background: #dcfce7; color: #166534; } 
+    .hybrid { background: #dbeafe; color: #1e40af; } 
+    .bronze { background: #ffedd5; color: #9a3412; } 
+    .closed { background: #f1f5f9; color: #475569; }
+    .diamond { background: #e0e7ff; color: #3730a3; }
+    
+    .sticky-side { 
+      position: sticky; 
+      top: 20px; 
+      margin-bottom: 20px; 
+    }
+    .sidebar-controls { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-top: 10px; 
+      border-top: 1px solid #e9ecef; 
+      padding-top: 10px; 
+    }
+    .btn-sidebar { 
+      font-size: 0.75rem; 
+      padding: 0; 
+      color: #1a237e; 
+      text-decoration: none; 
+      font-weight: 600;
+    }
+    .btn-sidebar:hover {
+      color: #3949ab;
+      text-decoration: underline;
+    }
+    .calc-btn { 
+      font-size: 0.75rem; 
+      border-radius: 20px; 
+      width: fit-content; 
+      margin: 8px auto 0; 
+      padding: 4px 16px;
+      background: linear-gradient(135deg, #1a237e, #3949ab);
+      border: none;
+      font-weight: 600;
+    }
+    .calc-btn:hover {
+      background: linear-gradient(135deg, #0d47a1, #1a237e);
+      transform: scale(1.05);
+    }
+    .progress-container { 
+      display: none; 
+      width: 90%; 
+      margin: 10px auto 0; 
+    }
+    .complete-label { 
+      display: none; 
+      font-size: 0.65rem; 
+      color: #198754; 
+      font-weight: bold; 
+      margin-top: 10px; 
+    }
+    .progress { 
+      height: 8px; 
+      background-color: rgba(26, 35, 126, 0.1); 
+      border-radius: 10px; 
+    }
+    .bar-row { 
+      cursor: pointer; 
+      padding: 8px; 
+      border-radius: 8px; 
+      transition: all 0.2s; 
+    }
+    .bar-row:hover { 
+      background: rgba(26, 35, 126, 0.05); 
+      transform: translateX(4px);
+    }
+    .bar-track { 
+      height: 8px; 
+      background: rgba(26, 35, 126, 0.1); 
+      border-radius: 10px; 
+      overflow: hidden; 
+    }
+    .bar-fill { 
+      height: 100%; 
+      background: linear-gradient(90deg, #1a237e, #3949ab); 
+      transition: width 0.3s ease; 
+      border-radius: 10px;
+    }
+    .chart-text { 
+      font-size: 0.75rem; 
+      color: #6c757d;
+    }
+    .accordion-button {
+      background: linear-gradient(135deg, #f8f9fa, #ffffff);
+      color: #1a237e;
+      font-weight: 600;
+    }
+    .accordion-button:not(.collapsed) {
+      background: linear-gradient(135deg, #1a237e, #283593);
+      color: white;
+    }
+    .form-select:focus, .form-control:focus {
+      border-color: #1a237e;
+      box-shadow: 0 0 0 0.25rem rgba(26, 35, 126, 0.25);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #1a237e, #3949ab);
+      border: none;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #0d47a1, #1a237e);
+    }
+    .loader-overlay {
+      background: linear-gradient(135deg, #fff, #f8f9fa);
+      border: 2px solid rgba(26, 35, 126, 0.2);
+      border-radius: 12px;
+      padding: 30px;
+    }
+    .spinner-border {
+      color: #1a237e;
+    }
+    .orcid-icon {
+      width: 14px;
+      height: 14px;
+      margin-left: 3px;
+      vertical-align: middle;
+    }
+    .sorbonne-author {
+      background: linear-gradient(135deg, #e8eaf6, #c5cae9);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #1a237e;
+    }
+    .author-item {
+      display: inline-block;
+      margin-right: 8px;
+      margin-bottom: 4px;
+    }
+        .input-group {
+
+      color:#1a237e;
+
+    }
+.input-group-text {
+
+      color:#1a237e;
+      font-weight: bold;
+    }
+  .mb-1 {
+    color:#1a237e;
+    
+  }
+
+  .text-decoration-none fw-bold ms-1 {
+    color:#1a237e;
+  }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <!-- Header Card -->
+    <div class="card header-card mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+          <div class="d-flex align-items-center gap-3">
+            <img class="logo" src="https://upload.wikimedia.org/wikipedia/en/thumb/f/ff/Sorbonne_University_Abu_Dhabi.svg/960px-Sorbonne_University_Abu_Dhabi.svg.png" alt="Sorbonne University Abu Dhabi Logo" />
+            <div>
+              <h1 class="h3 mb-1">Sorbonne University Abu Dhabi</h1>
+              <p class="mb-0 small opacity-75">Research Publications Dashboard</p>
+            </div>
+          </div>
+          <div class="text-end">
+            <span class="small opacity-75">Data Source:</span>
+            <a href="https://openalex.org/" target="_blank" class="text-black text-decoration-none fw-bold ms-1">OpenAlex</a>
+          </div>
+        </div>
+        
+        <hr class="my-3 opacity-25">
+        
+        <!-- Date Range Selector -->
+        <div class="d-flex justify-content-end">
+          <div class="input-group" style="max-width: 300px;">
+            <span class="input-group-text bg-white border-0">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+              </svg>
+            </span>
+            <select id="yearStart" class="form-select border-0 bg-white"></select>
+            <span class="input-group-text bg-white border-0">to</span>
+            <select id="yearEnd" class="form-select border-0 bg-white"></select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Charts Row -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-8">
+        <div class="card h-100">
+          <div class="card-body">
+            <h2 class="h6 mb-3 text-uppercase fw-bold" style="color: #1a237e;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                <path d="M0 0h1v15h15v1H0V0Zm10 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-1 0V4.9l-3.613 4.417a.5.5 0 0 1-.74.037L7.06 6.767l-3.656 5.027a.5.5 0 0 1-.808-.588l4-5.5a.5.5 0 0 1 .758-.06l2.609 2.61L13.445 4H10.5a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+              Publication Trends Over Time
+            </h2>
+            <div style="height: 300px;"><canvas id="timelineChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-4">
+        <div class="card h-100">
+          <div class="card-body">
+            <h2 class="h6 mb-3 text-uppercase fw-bold" style="color: #1a237e;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                <path d="M7.5 1.018a7 7 0 0 0-4.79 11.566L7.5 7.793V1.018zm1 0V7.5h6.482A7.001 7.001 0 0 0 8.5 1.018zM14.982 8.5H8.207l-4.79 4.79A7 7 0 0 0 14.982 8.5zM0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8z"/>
+              </svg>
+              Research Domains
+            </h2>
+            <div style="height: 300px;"><canvas id="domainPieChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APC Timeline -->
+    <div class="row g-4 mb-4" id="apcTimelineWrapper">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-body">
+            <h2 class="h6 mb-3 text-uppercase fw-bold" style="color: #1a237e;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+              </svg>
+              Estimated Article Processing Charges (APCs) by Year
+            </h2>
+            <div style="height: 280px; position: relative;">
+              <canvas id="apcTimelineChart"></canvas>
+              <div id="apcTimelineLoader" class="position-absolute top-50 start-50 translate-middle text-center d-none loader-overlay" style="z-index: 5;">
+                <div class="spinner-border mb-3" role="status"></div>
+                <div class="small text-muted">Loading APC data...</div>
+              </div>
+            </div>
+            <hr class="my-3" />
+            <p class="chart-text mb-0">
+              <em><strong>Note:</strong> APC estimates are based on data from <a href="https://www.openapc.net/" target="_blank">OpenAPC</a> and publisher list prices for gold & hybrid OA articles. Actual costs may vary due to institutional agreements, waivers, and discounts.</em>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Additional Analytics Row -->
+    <div class="row g-4 mb-4">
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h2 class="h6 mb-3 text-uppercase fw-bold" style="color: #1a237e;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                <path d="M3 2.5a2.5 2.5 0 0 1 5 0 2.5 2.5 0 0 1 5 0v.006c0 .07 0 .27-.038.494H15a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 14.5V7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h2.038A2.968 2.968 0 0 1 3 2.506V2.5zm1.068.5H7v-.5a1.5 1.5 0 1 0-3 0c0 .085.002.274.045.43a.522.522 0 0 0 .023.07zM9 3h2.932a.56.56 0 0 0 .023-.07c.043-.156.045-.345.045-.43a1.5 1.5 0 0 0-3 0V3zM1 4v2h6V4H1zm8 0v2h6V4H9zm5 3H9v8h4.5a.5.5 0 0 0 .5-.5V7zm-7 8V7H2v7.5a.5.5 0 0 0 .5.5H7z"/>
+              </svg>
+              Open Access Progress
+            </h2>
+            <div style="height: 280px;"><canvas id="oaProgressChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-lg-6">
+        <div class="card h-100">
+          <div class="card-body">
+            <h2 class="h6 mb-3 text-uppercase fw-bold" style="color: #1a237e;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
+                <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
+              </svg>
+              International Collaboration
+            </h2>
+            <div style="height: 280px;"><canvas id="collabChart"></canvas></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Content -->
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <!-- Filters Card -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="small fw-bold text-nowrap" style="color: #1a237e;">Filter Publications:</span>
+                <select id="oaFilter" class="form-select form-select-sm" style="min-width: 160px;">
+                  <option value="">All OA Statuses</option>
+                  <option value="bronze">Bronze</option>
+                  <option value="closed">Closed</option>
+                  <option value="diamond">Diamond</option>
+                  <option value="gold">Gold</option>
+                  <option value="green">Green</option>
+                  <option value="hybrid">Hybrid</option>
+                </select>
+              </div>
+              <select id="typeFilter" class="form-select form-select-sm" style="min-width: 140px;">
+                <option value="">All Types</option>
+                <option value="article">Article</option>
+                <option value="book">Book</option>
+                <option value="book-chapter">Book Chapter</option>
+                <option value="editorial">Editorial</option>
+                <option value="report">Report</option>
+                <option value="review">Review</option>
+              </select>
+              <select id="domainFilter" class="form-select form-select-sm" style="min-width: 160px;">
+                <option value="">All Domains</option>
+                <option value="1">Life Sciences</option>
+                <option value="2">Social Sciences</option>
+                <option value="3">Physical Sciences</option>
+                <option value="4">Health Sciences</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Cards - Row 1 -->
+        <div class="row g-3 mb-4 text-center">
+          <div class="col-md-3">
+            <a id="linkTotal" href="#" target="_blank" class="card kpi">
+              <div class="muted">Total Publications</div>
+              <div class="kpi-val" id="kpiTotalWorks">—</div>
+            </a>
+          </div>
+          <div class="col-md-3">
+            <a id="linkOA" href="#" target="_blank" class="card kpi">
+              <div class="muted">Open Access</div>
+              <div class="kpi-val" id="kpiTotalOA">—</div>
+            </a>
+          </div>
+          <div class="col-md-3">
+            <div class="card kpi">
+              <div class="muted">Total Est. APCs</div>
+              <div class="kpi-val" id="kpiTotalAPC">$0</div>
+              <button id="calcAPC" class="btn btn-primary calc-btn">Calculate</button>
+              <div id="apcProgCont" class="progress-container">
+                <div class="progress">
+                  <div id="apcBar" class="progress-bar progress-bar-striped progress-bar-animated" style="width: 0%"></div>
+                </div>
+              </div>
+              <div id="apcDone" class="complete-label">
+                ✓ COMPLETE 
+                <button onclick="resetDeepCalc('APC')" class="btn btn-link p-0 ms-2" style="font-size: 0.6rem; color: #6c757d;">Reset</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <a id="linkRetracted" href="#" target="_blank" class="card kpi">
+              <div class="muted">Retractions</div>
+              <div class="kpi-val text-danger" id="kpiRetractions">—</div>
+            </a>
+          </div>
+        </div>
+
+        <!-- KPI Cards - Row 2 (Citations) -->
+        <div class="row g-3 mb-4 text-center">
+          <div class="col-md-4">
+            <div class="card kpi">
+              <div class="muted">Total Citations</div>
+              <div id="citeTotalVal" class="kpi-val">0</div>
+              <button id="calcCites" class="btn btn-primary calc-btn">Calculate</button>
+              <div id="citeProgCont" class="progress-container">
+                <div class="progress">
+                  <div id="citeBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 0%"></div>
+                </div>
+              </div>
+              <div id="citeDone" class="complete-label">
+                ✓ CALCULATED 
+                <button onclick="resetDeepCalc('Cites')" class="btn btn-link p-0 ms-2" style="font-size: 0.6rem; color: #6c757d;">Reset</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card kpi">
+              <div class="muted">Avg Citations</div>
+              <div id="citeAvgVal" class="kpi-val">0</div>
+              <div class="small text-muted mt-2" style="font-size:0.65rem">Per Publication</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card kpi">
+              <div class="muted">Avg OA Citations</div>
+              <div id="citeOAAvgVal" class="kpi-val">0</div>
+              <div class="small text-muted mt-2" style="font-size:0.65rem">Per OA Publication</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Works Table -->
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="mb-3">
+              <h3 class="h6 text-uppercase fw-bold mb-0" style="color: #1a237e;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                  <path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/>
+                </svg>
+                Most Recent Publications
+              </h3>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th class="small text-uppercase fw-bold">Title</th>
+                    <th class="small text-uppercase fw-bold">Authors</th>
+                    <th class="small text-uppercase fw-bold">Type</th>
+                    <th class="small text-uppercase fw-bold">OA Status</th>
+                    <th class="small text-uppercase fw-bold">Date</th>
+                    <th class="small text-uppercase fw-bold text-center">Citations</th>
+                    <th class="small text-uppercase fw-bold text-end">APC</th>
+                  </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+              </table>
+            </div>
+            <button id="loadMore" class="btn btn-outline-primary btn-sm w-100 mt-3">
+              Load More Publications
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar with Analytics -->
+      <div class="col-lg-4">
+        <div class="sticky-side">
+          <div class="accordion shadow-sm rounded-3 overflow-hidden" id="sidebarAccordion">
+            
+            <!-- Authors -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAuthors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
+                  </svg>
+                  Top Authors
+                </button>
+              </h2>
+              <div id="collapseAuthors" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsAuthor"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('author')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('author')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Journals -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseJournals">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z"/>
+                    <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z"/>
+                  </svg>
+                  Top Journals
+                </button>
+              </h2>
+              <div id="collapseJournals" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsJournal"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('journal')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('journal')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Publishers -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapsePubs">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M8.5 2.687c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492V2.687zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"/>
+                  </svg>
+                  Top Publishers
+                </button>
+              </h2>
+              <div id="collapsePubs" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsPublisher"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('publisher')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('publisher')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Domains -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDomains">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm7.5-6.923c-.67.204-1.335.82-1.887 1.855A7.97 7.97 0 0 0 5.145 4H7.5V1.077zM4.09 4a9.267 9.267 0 0 1 .64-1.539 6.7 6.7 0 0 1 .597-.933A7.025 7.025 0 0 0 2.255 4H4.09zm-.582 3.5c.03-.877.138-1.718.312-2.5H1.674a6.958 6.958 0 0 0-.656 2.5h2.49zM4.847 5a12.5 12.5 0 0 0-.338 2.5H7.5V5H4.847zM8.5 5v2.5h2.99a12.495 12.495 0 0 0-.337-2.5H8.5zM4.51 8.5a12.5 12.5 0 0 0 .337 2.5H7.5V8.5H4.51zm3.99 0V11h2.653c.187-.765.306-1.608.338-2.5H8.5zM5.145 12c.138.386.295.744.468 1.068.552 1.035 1.218 1.65 1.887 1.855V12H5.145zm.182 2.472a6.696 6.696 0 0 1-.597-.933A9.268 9.268 0 0 1 4.09 12H2.255a7.024 7.024 0 0 0 3.072 2.472zM3.82 11a13.652 13.652 0 0 1-.312-2.5h-2.49c.062.89.291 1.733.656 2.5H3.82zm6.853 3.472A7.024 7.024 0 0 0 13.745 12H11.91a9.27 9.27 0 0 1-.64 1.539 6.688 6.688 0 0 1-.597.933zM8.5 12v2.923c.67-.204 1.335-.82 1.887-1.855.173-.324.33-.682.468-1.068H8.5zm3.68-1h2.146c.365-.767.594-1.61.656-2.5h-2.49a13.65 13.65 0 0 1-.312 2.5zm2.802-3.5a6.959 6.959 0 0 0-.656-2.5H12.18c.174.782.282 1.623.312 2.5h2.49zM11.27 2.461c.247.464.462.98.64 1.539h1.835a7.024 7.024 0 0 0-3.072-2.472c.218.284.418.598.597.933zM10.855 4a7.966 7.966 0 0 0-.468-1.068C9.835 1.897 9.17 1.282 8.5 1.077V4h2.355z"/>
+                  </svg>
+                  Research Domains
+                </button>
+              </h2>
+              <div id="collapseDomains" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsDomain"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('domain')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fields -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFields">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z"/>
+                  </svg>
+                  Research Fields
+                </button>
+              </h2>
+              <div id="collapseFields" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsField"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('field')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('field')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Subfields -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSubfields">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5z"/>
+                  </svg>
+                  Research Subfields
+                </button>
+              </h2>
+              <div id="collapseSubfields" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsSubfield"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('subfield')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('subfield')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Publication Type -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseType">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"/>
+                  </svg>
+                  Publication Types
+                </button>
+              </h2>
+              <div id="collapseType" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsType"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('type')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('type')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- OA Status -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOA">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                  </svg>
+                  Open Access Status
+                </button>
+              </h2>
+              <div id="collapseOA" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsOAStatus"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('oa')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Funders -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFunders">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M1 3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1H1zm7 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                    <path d="M0 5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V5zm3 0a2 2 0 0 1-2 2v4a2 2 0 0 1 2 2h10a2 2 0 0 1 2-2V7a2 2 0 0 1-2-2H3z"/>
+                  </svg>
+                  Funding Agencies
+                </button>
+              </h2>
+              <div id="collapseFunders" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsFunder"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('funder')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('funder')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SDGs -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSDGs">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                  </svg>
+                  UN Sustainable Development Goals
+                </button>
+              </h2>
+              <div id="collapseSDGs" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsSdg"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('sdg')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('sdg')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Collaborating Institutions -->
+            <div class="accordion-item border-0">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed py-3 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseInstitutions">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="me-2" viewBox="0 0 16 16">
+                    <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z"/>
+                  </svg>
+                  Collaborating Institutions
+                </button>
+              </h2>
+              <div id="collapseInstitutions" class="accordion-collapse collapse" data-bs-parent="#sidebarAccordion">
+                <div class="accordion-body p-3">
+                  <div id="barsInstitution"></div>
+                  <div class="sidebar-controls px-1">
+                    <button class="btn btn-link btn-sidebar" onclick="loadMoreSidebar('institution')">+ Load More</button>
+                    <button class="btn btn-link btn-sidebar text-muted" onclick="resetSidebar('institution')">Reset</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="container py-4 mt-5">
+    <div class="text-center text-muted small">
+      <p class="mb-2">© 2026 Sorbonne University Abu Dhabi | Data powered by <a href="https://openalex.org/" target="_blank" class="text-decoration-none">OpenAlex</a></p>
+      <p class="mb-0">For questions or feedback, please contact your library research team</p>
+    </div>
+  </footer>
+
+  <script>
+    (() => {
+      const MIN_YEAR = 2010;
+      const CURRENT_YEAR = new Date().getFullYear();
+      const MAILTO = "library@sorbonne.ae"; // Update with actual contact
+      const INST_ID = "I4210141120"; // Sorbonne University Abu Dhabi
+      const INST_COLOR = "#1a237e"; // Sorbonne blue
+
+      let chart = null, apcChart = null, domainChart = null, oaProgressChart = null, collabChart = null;
+      let cursor = "*", totalWorks = 0, totalOAWorks = 0;
+      let active = { 
+        yearStart: MIN_YEAR, 
+        yearEnd: CURRENT_YEAR, 
+        oa_status: "", 
+        type: "", 
+        domain: "" 
+      };
+      let sidebarLimits = { 
+        author: 5, journal: 5, publisher: 5, type: 5, oa: 5, 
+        funder: 5, domain: 5, field: 5, subfield: 5, sdg: 5, institution: 5
+      };
+      let sidebarData = {};
+
+      const nfmt = x => new Intl.NumberFormat().format(x);
+      const moneyUSD = x => new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        maximumFractionDigits: 0
+      }).format(x);
+      const getYearRange = () => `${active.yearStart}-${active.yearEnd}`;
+
+      const fetchJson = async (url) => {
+        try {
+          const response = await fetch(`${url}${url.includes('?') ? '&' : '?'}mailto=${MAILTO}`);
+          return response.ok ? await response.json() : null;
+        } catch (e) {
+          console.error('Fetch error:', e);
+          return null;
+        }
+      };
+
+      function resetStatsUI() {
+        ["apcDone", "citeDone"].forEach(id => 
+          document.getElementById(id).style.display = "none"
+        );
+        ["apcBar", "citeBar"].forEach(id => 
+          document.getElementById(id).style.width = "0%"
+        );
+        ["apcProgCont", "citeProgCont"].forEach(id =>
+          document.getElementById(id).style.display = "none"
+        );
+        ["calcAPC", "calcCites"].forEach(id => 
+          document.getElementById(id).style.display = "inline-block"
+        );
+        document.getElementById("kpiTotalAPC").textContent = "$0";
+        document.getElementById("citeTotalVal").textContent = "0";
+        document.getElementById("citeAvgVal").textContent = "0";
+        document.getElementById("citeOAAvgVal").textContent = "0";
+      }
+
+      async function runDeepCalculations(type) {
+        const isAPC = type === 'APC';
+        const btn = document.getElementById(isAPC ? "calcAPC" : "calcCites");
+        const cont = document.getElementById(isAPC ? "apcProgCont" : "citeProgCont");
+        const bar = document.getElementById(isAPC ? "apcBar" : "citeBar");
+
+        btn.style.display = "none";
+        cont.style.display = "block";
+
+        let sumValue = 0, sumOACitations = 0, currentCursor = "*", processed = 0;
+        const y = getYearRange();
+        const allowedTypes = "article|types/book-chapter|types/book|types/review|types/report|types/editorial";
+        let f = `authorships.institutions.lineage:${INST_ID},type:${allowedTypes},publication_year:${y}`;
+
+        if (active.oa_status) f += `,open_access.oa_status:${active.oa_status}`;
+        if (active.type) f += `,type:${active.type}`;
+        if (active.domain) f += `,primary_topic.domain.id:${active.domain}`;
+
+        while (currentCursor) {
+          const select = isAPC ? "apc_paid" : "cited_by_count,open_access";
+          const data = await fetchJson(
+            `https://api.openalex.org/works?filter=${f}&cursor=${currentCursor}&per-page=200&select=${select}`
+          );
+          
+          if (!data || data.results.length === 0) break;
+
+          data.results.forEach(w => {
+            if (isAPC) {
+              if (w.apc_paid?.value_usd) sumValue += w.apc_paid.value_usd;
+            } else {
+              sumValue += (w.cited_by_count || 0);
+              if (w.open_access?.is_oa) sumOACitations += (w.cited_by_count || 0);
+            }
+          });
+
+          processed += data.results.length;
+          bar.style.width = Math.min(100, (processed / (totalWorks || 1)) * 100) + "%";
+
+          if (isAPC) {
+            document.getElementById("kpiTotalAPC").textContent = moneyUSD(sumValue);
+          } else {
+            document.getElementById("citeTotalVal").textContent = nfmt(sumValue);
+            document.getElementById("citeAvgVal").textContent = 
+              (sumValue / (totalWorks || 1)).toFixed(2);
+            document.getElementById("citeOAAvgVal").textContent = 
+              (sumOACitations / (totalOAWorks || 1)).toFixed(2);
+          }
+
+          currentCursor = data.meta.next_cursor;
+        }
+
+        cont.style.display = "none";
+        document.getElementById(isAPC ? "apcDone" : "citeDone").style.display = "block";
+      }
+
+      async function updateTimeline() {
+        const start = active.yearStart, end = active.yearEnd;
+        const years = Array.from({length: end - start + 1}, (_, i) => start + i);
+        const baseF = `authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial,publication_year:${start}-${end}`;
+
+        const [totalRes, oaRes, goldRes, hybridRes] = await Promise.all([
+          fetchJson(`https://api.openalex.org/works?filter=${baseF}&group_by=publication_year`),
+          fetchJson(`https://api.openalex.org/works?filter=${baseF},open_access.is_oa:true&group_by=publication_year`),
+          fetchJson(`https://api.openalex.org/works?filter=${baseF},open_access.oa_status:gold&group_by=publication_year`),
+          fetchJson(`https://api.openalex.org/works?filter=${baseF},open_access.oa_status:hybrid&group_by=publication_year`)
+        ]);
+
+        const mapCounts = (res) => Object.fromEntries(
+          (res?.group_by || []).map(d => [d.key, d.count])
+        );
+
+        const totals = mapCounts(totalRes);
+        const oas = mapCounts(oaRes);
+        const golds = mapCounts(goldRes);
+        const hybrids = mapCounts(hybridRes);
+
+        if (chart) chart.destroy();
+        
+        chart = new Chart(document.getElementById('timelineChart'), {
+          type: 'line',
+          data: {
+            labels: years,
+            datasets: [
+              {
+                label: 'Total Publications',
+                data: years.map(y => totals[y] || 0),
+                borderColor: '#1a237e',
+                backgroundColor: 'rgba(26, 35, 126, 0.1)',
+                tension: 0.4,
+                borderWidth: 3,
+                fill: true
+              },
+              {
+                label: 'Open Access',
+                data: years.map(y => oas[y] || 0),
+                borderColor: '#22c55e',
+                backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                tension: 0.4,
+                borderWidth: 2,
+                fill: true
+              },
+              {
+                label: 'Gold OA',
+                data: years.map(y => golds[y] || 0),
+                borderColor: '#fbbf24',
+                borderDash: [5, 5],
+                tension: 0.4,
+                borderWidth: 2
+              },
+              {
+                label: 'Hybrid OA',
+                data: years.map(y => hybrids[y] || 0),
+                borderColor: '#8b5cf6',
+                borderDash: [2, 2],
+                tension: 0.4,
+                borderWidth: 2
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+                labels: {
+                  usePointStyle: true,
+                  padding: 15
+                }
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+
+      async function updateAPCTimeline() {
+        document.getElementById('apcTimelineLoader')?.classList.remove('d-none');
+        
+        try {
+          const start = active.yearStart, end = active.yearEnd;
+          const years = Array.from({length: end - start + 1}, (_, i) => start + i);
+          const baseFilter = `authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial`;
+          const apcByYear = {};
+
+          for (const y of years) {
+            const data = await fetchJson(
+              `https://api.openalex.org/works?filter=${baseFilter},publication_year:${y}&group_by=apc_paid.value_usd`
+            );
+            
+            let sum = 0;
+            (data?.group_by || []).forEach(g => {
+              const v = Number(g.key);
+              if (Number.isFinite(v)) sum += v * (g.count || 0);
+            });
+            apcByYear[y] = sum;
+          }
+
+          if (apcChart) apcChart.destroy();
+          
+          apcChart = new Chart(document.getElementById("apcTimelineChart"), {
+            type: "bar",
+            data: {
+              labels: years,
+              datasets: [{
+                label: "Estimated APC Sum (USD)",
+                data: years.map(y => apcByYear[y] || 0),
+                backgroundColor: 'rgba(26, 35, 126, 0.7)',
+                borderColor: '#1a237e',
+                borderWidth: 2,
+                borderRadius: 6
+              }]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                legend: {
+                  display: false
+                },
+                tooltip: {
+                  callbacks: {
+                    label: (context) => moneyUSD(context.parsed.y)
+                  }
+                }
+              },
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    callback: v => moneyUSD(v)
+                  },
+                  grid: {
+                    color: 'rgba(0, 0, 0, 0.05)'
+                  }
+                },
+                x: {
+                  grid: {
+                    display: false
+                  }
+                }
+              }
+            }
+          });
+        } finally {
+          document.getElementById('apcTimelineLoader')?.classList.add('d-none');
+        }
+      }
+
+      async function updateDomainChart() {
+        const filter = `authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial,publication_year:${getYearRange()}`;
+        const data = await fetchJson(
+          `https://api.openalex.org/works?filter=${filter}&group_by=primary_topic.domain.id`
+        );
+        
+        const domainGroups = data?.group_by || [];
+        const totalCount = domainGroups.reduce((sum, d) => sum + d.count, 0);
+
+        if (domainChart) domainChart.destroy();
+        
+        domainChart = new Chart(document.getElementById('domainPieChart'), {
+          type: 'doughnut',
+          data: {
+            labels: domainGroups.map(d => 
+              `${d.key_display_name || "Unknown"} (${((d.count / totalCount) * 100).toFixed(1)}%)`
+            ),
+            datasets: [{
+              data: domainGroups.map(d => d.count),
+              backgroundColor: [
+                '#1a237e',
+                '#3949ab',
+                '#5e35b1',
+                '#1e88e5',
+                '#00acc1',
+                '#26a69a'
+              ],
+              borderWidth: 2,
+              borderColor: '#fff',
+              hoverOffset: 15
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  boxWidth: 15,
+                  font: {
+                    size: 11
+                  },
+                  padding: 10
+                }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context) => {
+                    const label = context.label || '';
+                    const value = nfmt(context.parsed);
+                    return `${label}: ${value} publications`;
+                  }
+                }
+              }
+            },
+            cutout: '60%'
+          }
+        });
+      }
+
+      async function updateOAProgressChart() {
+        const start = active.yearStart, end = active.yearEnd;
+        const years = Array.from({length: end - start + 1}, (_, i) => start + i);
+        const baseF = `authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial,publication_year:${start}-${end}`;
+
+        const [totalRes, oaRes] = await Promise.all([
+          fetchJson(`https://api.openalex.org/works?filter=${baseF}&group_by=publication_year`),
+          fetchJson(`https://api.openalex.org/works?filter=${baseF},open_access.is_oa:true&group_by=publication_year`)
+        ]);
+
+        const mapCounts = (res) => Object.fromEntries(
+          (res?.group_by || []).map(d => [d.key, d.count])
+        );
+
+        const totals = mapCounts(totalRes);
+        const oas = mapCounts(oaRes);
+        
+        const oaPercentages = years.map(y => {
+          const total = totals[y] || 0;
+          const oa = oas[y] || 0;
+          return total > 0 ? ((oa / total) * 100).toFixed(1) : 0;
+        });
+
+        if (oaProgressChart) oaProgressChart.destroy();
+        
+        oaProgressChart = new Chart(document.getElementById('oaProgressChart'), {
+          type: 'line',
+          data: {
+            labels: years,
+            datasets: [{
+              label: 'OA Percentage',
+              data: oaPercentages,
+              borderColor: '#22c55e',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              tension: 0.4,
+              borderWidth: 3,
+              fill: true,
+              pointRadius: 5,
+              pointHoverRadius: 7
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context) => `${context.parsed.y}% Open Access`
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                  callback: v => v + '%'
+                },
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)'
+                }
+              },
+              x: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+
+      async function updateCollaborationChart() {
+        const filter = `authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial,publication_year:${getYearRange()}`;
+        
+        // Get top collaborating countries
+        const data = await fetchJson(
+          `https://api.openalex.org/works?filter=${filter}&group_by=authorships.countries`
+        );
+        
+        const countries = (data?.group_by || [])
+          .filter(c => c.key !== 'AE' && c.key !== 'unknown') // Exclude UAE (home country)
+          .slice(0, 10);
+
+        if (collabChart) collabChart.destroy();
+        
+        collabChart = new Chart(document.getElementById('collabChart'), {
+          type: 'bar',
+          data: {
+            labels: countries.map(c => c.key_display_name || c.key),
+            datasets: [{
+              label: 'Collaborations',
+              data: countries.map(c => c.count),
+              backgroundColor: 'rgba(26, 35, 126, 0.7)',
+              borderColor: '#1a237e',
+              borderWidth: 2,
+              borderRadius: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+              legend: {
+                display: false
+              },
+              tooltip: {
+                callbacks: {
+                  label: (context) => `${nfmt(context.parsed.x)} publications`
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                grid: {
+                  color: 'rgba(0, 0, 0, 0.05)'
+                }
+              },
+              y: {
+                grid: {
+                  display: false
+                }
+              }
+            }
+          }
+        });
+      }
+
+      async function loadDashboard() {
+        const y = getYearRange();
+        const allowedTypes = "article|types/book-chapter|types/book|types/review|types/report|types/editorial";
+        let f = `authorships.institutions.lineage:${INST_ID},type:${allowedTypes},publication_year:${y}`;
+        
+        if (active.oa_status) f += `,open_access.oa_status:${active.oa_status}`;
+        if (active.type) f += `,type:${active.type}`;
+        if (active.domain) f += `,primary_topic.domain.id:${active.domain}`;
+
+        const [
+          meta, oaMeta, retractMeta,
+          gbAuth, gbJourn, gbPub, gbType, gbOA, gbFunder,
+          gbDomain, gbField, gbSub, gbSdg, gbInst
+        ] = await Promise.all([
+          fetchJson(`https://api.openalex.org/works?filter=${f}&per-page=1`),
+          fetchJson(`https://api.openalex.org/works?filter=${f},open_access.is_oa:true&per-page=1`),
+          fetchJson(`https://api.openalex.org/works?filter=${f},is_retracted:true&per-page=1`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=authorships.author.id`),
+          fetchJson(`https://api.openalex.org/works?filter=${f},primary_location.source.type:journal&group_by=primary_location.source.id`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=primary_location.source.publisher_lineage`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=type`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=open_access.oa_status`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=funders.id`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=primary_topic.domain.id`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=primary_topic.field.id`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=primary_topic.subfield.id`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=sustainable_development_goals.id`),
+          fetchJson(`https://api.openalex.org/works?filter=${f}&group_by=authorships.institutions.id`)
+        ]);
+
+        totalWorks = meta?.meta?.count || 0;
+        totalOAWorks = oaMeta?.meta?.count || 0;
+
+        document.getElementById("kpiTotalWorks").textContent = nfmt(totalWorks);
+        document.getElementById("kpiTotalOA").textContent = nfmt(totalOAWorks);
+        document.getElementById("kpiRetractions").textContent = nfmt(retractMeta?.meta?.count || 0);
+
+        sidebarData = {
+          author: gbAuth?.group_by,
+          journal: gbJourn?.group_by,
+          publisher: gbPub?.group_by,
+          type: gbType?.group_by,
+          oa: gbOA?.group_by,
+          funder: gbFunder?.group_by,
+          domain: gbDomain?.group_by,
+          field: gbField?.group_by,
+          subfield: gbSub?.group_by,
+          sdg: gbSdg?.group_by,
+          institution: (gbInst?.group_by || []).filter(i => i.key !== INST_ID)
+        };
+
+        renderAllBars();
+        cursor = "*";
+        document.getElementById("tbody").innerHTML = "";
+        loadWorks();
+        updateBoxLinks();
+      }
+
+      function renderAllBars() {
+        const barConfigs = [
+          ["barsAuthor", "author", "authorships.author.id"],
+          ["barsJournal", "journal", "primary_location.source.type:journal,primary_location.source.id"],
+          ["barsPublisher", "publisher", "primary_location.source.publisher_lineage"],
+          ["barsType", "type", "type"],
+          ["barsOAStatus", "oa", "open_access.oa_status"],
+          ["barsFunder", "funder", "funders.id"],
+          ["barsDomain", "domain", "primary_topic.domain.id"],
+          ["barsField", "field", "primary_topic.field.id"],
+          ["barsSubfield", "subfield", "primary_topic.subfield.id"],
+          ["barsSdg", "sdg", "sustainable_development_goals.id"],
+          ["barsInstitution", "institution", "authorships.institutions.id"]
+        ];
+        
+        barConfigs.forEach(([elemId, limitKey, filterKey]) => 
+          renderBars(elemId, sidebarData[limitKey], limitKey, filterKey)
+        );
+      }
+
+      function renderBars(id, groups, limitKey, filterKey) {
+        const div = document.getElementById(id);
+        div.innerHTML = "";
+        
+        const sorted = (groups || []).slice(0, sidebarLimits[limitKey]);
+        const max = Math.max(...sorted.map(g => g.count), 1);
+
+        sorted.forEach(g => {
+          const row = document.createElement("div");
+          row.className = "bar-row mb-2";
+          row.innerHTML = `
+            <div class="d-flex justify-content-between small mb-1">
+              <span class="text-truncate fw-medium" style="max-width:70%">${g.key_display_name || g.key}</span>
+              <span class="fw-bold" style="color: ${INST_COLOR}">${nfmt(g.count)}</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width:${(g.count/max)*100}%"></div>
+            </div>
+          `;
+          
+          row.onclick = () => {
+            const url = `https://openalex.org/works?filter=authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial,publication_year:${getYearRange()},${filterKey}:${g.key.split('/').pop()}`;
+            window.open(url, '_blank');
+          };
+          
+          div.appendChild(row);
+        });
+      }
+
+      function updateBoxLinks() {
+        let filter = `authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial,publication_year:${getYearRange()}`;
+        
+        if (active.oa_status) filter += `,open_access.oa_status:${active.oa_status}`;
+        if (active.type) filter += `,type:${active.type}`;
+        if (active.domain) filter += `,primary_topic.domain.id:${active.domain}`;
+
+        const baseUrl = "https://openalex.org/works?filter=";
+        document.getElementById("linkTotal").href = baseUrl + filter;
+        document.getElementById("linkOA").href = baseUrl + filter + ",open_access.is_oa:true";
+        document.getElementById("linkRetracted").href = baseUrl + filter + ",is_retracted:true";
+      }
+
+      async function loadWorks() {
+        let f = `authorships.institutions.lineage:${INST_ID},type:article|types/book-chapter|types/book|types/review|types/report|editorial,publication_year:${getYearRange()}`;
+        
+        if (active.oa_status) f += `,open_access.oa_status:${active.oa_status}`;
+        if (active.type) f += `,type:${active.type}`;
+        if (active.domain) f += `,primary_topic.domain.id:${active.domain}`;
+
+        const data = await fetchJson(
+          `https://api.openalex.org/works?filter=${f}&sort=publication_date:desc&cursor=${cursor}&per-page=10&select=id,display_name,type,open_access,publication_date,cited_by_count,apc_paid,authorships`
+        );
+        
+        if (!data) return;
+        cursor = data.meta.next_cursor;
+
+        data.results.forEach(w => {
+          // Process authors
+          const authors = w.authorships || [];
+          const authorHTML = authors.slice(0, 5).map(a => {
+            const authorName = a.author?.display_name || 'Unknown';
+            const orcid = a.author?.orcid;
+            const isSorbonne = a.institutions?.some(inst => 
+              inst.id === `https://openalex.org/${INST_ID}`
+            );
+            
+            const authorClass = isSorbonne ? 'sorbonne-author' : '';
+            const orcidIcon = orcid ? 
+              `<a href="${orcid}" target="_blank" title="ORCID">
+                <img src="https://orcid.org/assets/vectors/orcid.logo.icon.svg" class="orcid-icon" alt="ORCID" />
+              </a>` : '';
+            
+            return `<span class="author-item ${authorClass}">${authorName}${orcidIcon}</span>`;
+          }).join('');
+          
+          const moreAuthors = authors.length > 5 ? `<span class="small text-muted">+${authors.length - 5} more</span>` : '';
+          
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td style="max-width: 300px;">
+              <a href="https://openalex.org/${w.id.split('/').pop()}" 
+                 target="_blank" 
+                 class="small text-decoration-none fw-medium" 
+                 style="color: ${INST_COLOR}">
+                ${w.display_name}
+              </a>
+            </td>
+            <td class="small" style="max-width: 250px;">
+              ${authorHTML}${moreAuthors}
+            </td>
+            <td class="small text-muted text-capitalize">
+              ${w.type.replace(/-/g, ' ')}
+            </td>
+            <td>
+              <span class="chip ${w.open_access.oa_status}">
+                ${w.open_access.oa_status}
+              </span>
+            </td>
+            <td class="small text-muted">${w.publication_date}</td>
+            <td class="small fw-bold text-center">${nfmt(w.cited_by_count)}</td>
+            <td class="small text-end">
+              ${w.apc_paid?.value_usd ? moneyUSD(w.apc_paid.value_usd) : '—'}
+            </td>
+          `;
+          document.getElementById("tbody").appendChild(row);
+        });
+      }
+
+      window.loadMoreSidebar = (type) => {
+        sidebarLimits[type] += 5;
+        renderAllBars();
+      };
+
+      window.resetSidebar = (type) => {
+        sidebarLimits[type] = 5;
+        renderAllBars();
+      };
+
+      window.resetDeepCalc = (type) => {
+        resetStatsUI();
+      };
+
+      function init() {
+        // Initialize year selectors
+        const startSel = document.getElementById("yearStart");
+        const endSel = document.getElementById("yearEnd");
+        
+        for (let y = CURRENT_YEAR; y >= MIN_YEAR; y--) {
+          startSel.appendChild(new Option(y, y));
+          endSel.appendChild(new Option(y, y));
+        }
+        
+        startSel.value = MIN_YEAR;
+        endSel.value = CURRENT_YEAR;
+
+        const handleYearChange = () => {
+          active.yearStart = parseInt(startSel.value);
+          active.yearEnd = parseInt(endSel.value);
+          
+          if (active.yearStart > active.yearEnd) {
+            startSel.value = active.yearEnd;
+            active.yearStart = active.yearEnd;
+          }
+          
+          resetStatsUI();
+          updateTimeline();
+          updateDomainChart();
+          updateOAProgressChart();
+          updateCollaborationChart();
+          updateAPCTimeline();
+          loadDashboard();
+        };
+
+        // Event listeners
+        startSel.onchange = handleYearChange;
+        endSel.onchange = handleYearChange;
+        
+        document.getElementById("oaFilter").onchange = (e) => {
+          active.oa_status = e.target.value;
+          loadDashboard();
+        };
+        
+        document.getElementById("typeFilter").onchange = (e) => {
+          active.type = e.target.value;
+          loadDashboard();
+        };
+        
+        document.getElementById("domainFilter").onchange = (e) => {
+          active.domain = e.target.value;
+          loadDashboard();
+        };
+        
+        document.getElementById("loadMore").onclick = loadWorks;
+        document.getElementById("calcAPC").onclick = () => runDeepCalculations('APC');
+        document.getElementById("calcCites").onclick = () => runDeepCalculations('CITATIONS');
+
+        // Initial load
+        updateTimeline();
+        updateDomainChart();
+        updateOAProgressChart();
+        updateCollaborationChart();
+        updateAPCTimeline();
+        loadDashboard();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
